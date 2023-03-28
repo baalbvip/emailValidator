@@ -78,17 +78,31 @@ app.get("/validate/:email", async (req, res) => {
             }
 
 
-            const socket = await net.createConnection(25, domain)
-            const response = await socket.read()
-
-            socket.write(`HELO ${domain}\r\n`);
-            await socket.read();
-            socket.write(`MAIL FROM: <notificacion@smtp-bdv03.cf>\r\n`);
-            await socket.read();
-            socket.write(`RCPT TO: <benavides21francisco@gmail.com>\r\n`);
-            const respuesta = await socket.read();
-
-            console.log(respuesta)
+            try {
+                // Intentar conectar con el servidor SMTP
+                const socket = await net.createConnection(25, domain);
+                const response = await socket.read();
+                // Enviar comandos SMTP para verificar el correo electrónico
+                socket.write(`HELO ${domain}\r\n`);
+                await socket.read();
+                socket.write(`MAIL FROM: <tu_correo@gmail.com>\r\n`);
+                await socket.read();
+                socket.write(`RCPT TO: <${correo}>\r\n`);
+                const respuesta = await socket.read();
+                // Si la respuesta contiene 250, el correo existe
+                if (respuesta.includes('250')) {
+                    console.log(`El correo electrónico ${correo} existe.`);
+                    return true;
+                } else {
+                    console.log(`El correo electrónico ${correo} no existe.`);
+                    return false;
+                }
+                
+                await socket.end();
+            } catch (error) {
+                console.log(`Error al verificar el correo electrónico ${correo}: ${error}`);
+                return false;
+            }
 
         }
     } else {
