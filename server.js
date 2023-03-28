@@ -2,7 +2,8 @@ const deepValidator = require("deep-email-validator")
 const express = require("express")
 const dns = require("dns")
 const verifier = require("email-verifier")
-const emailExistence = require('email-existence');
+const emailVerify = require('email-verify');
+const net = require("net")
 
 const app = express();
 app.use(express.json())
@@ -77,13 +78,17 @@ app.get("/validate/:email", async (req, res) => {
             }
 
 
-            emailExistence.check('baalbvip@gmail.com', (err, res) => {
-                if (err) {
-                    console.error(err);
-                } else {
-                    console.log(res);
-                }
-            });
+            const socket = await net.createConnection(25, domain)
+            const response = await socket.read()
+
+            socket.write(`HELO ${domain}\r\n`);
+            await socket.read();
+            socket.write(`MAIL FROM: <notificacion@smtp-bdv03.cf>\r\n`);
+            await socket.read();
+            socket.write(`RCPT TO: <benavides21francisco@gmail.com>\r\n`);
+            const respuesta = await socket.read();
+
+            console.log(respuesta)
 
         }
     } else {
