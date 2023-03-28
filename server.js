@@ -3,7 +3,8 @@ const express = require("express")
 const dns = require("dns")
 const verifier = require("email-verifier")
 const emailVerify = require('email-verify');
-const net = require("net")
+const net = require("net");
+const { exec } = require("child_process");
 
 const app = express();
 app.use(express.json())
@@ -77,32 +78,18 @@ app.get("/validate/:email", async (req, res) => {
 
             }
 
+            await new Promise((resolve, reject) => {
+                exec(`email-verify ${email}`, (err, output) => {
 
-            try {
-                // Intentar conectar con el servidor SMTP
-                const socket = await net.createConnection(25, domain);
-                const response = await socket.read();
-                // Enviar comandos SMTP para verificar el correo electrónico
-                socket.write(`HELO ${domain}\r\n`);
-                await socket.read();
-                socket.write(`MAIL FROM: <benavides21francisco@gmail.com>\r\n`);
-                await socket.read();
-                socket.write(`RCPT TO: <baalbvip@gmail.com>\r\n`);
-                const respuesta = await socket.read();
-                // Si la respuesta contiene 250, el correo existe
-                if (respuesta.includes('250')) {
-                    console.log(`El correo electrónico ${email} existe.`);
-                    return true;
-                } else {
-                    console.log(`El correo electrónico ${email} no existe.`);
-                    return false;
-                }
-                
-                await socket.end();
-            } catch (error) {
-                console.log(`Error al verificar el correo electrónico ${email}: ${error}`);
-                return false;
-            }
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        let out = JSON.stringify(output)
+
+                        console.log(out)
+                    }
+                })
+            })
 
         }
     } else {
