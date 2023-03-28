@@ -56,7 +56,7 @@ app.get("/validate/:email", async (req, res) => {
         if (smtp !== undefined) {
 
             // Pasa por el validador mas estricto, si este devuelve false y los mensajes son raros pasemos por otro validador
-            deepValidator.validate(email).then((result) => {
+            await deepValidator.validate(email).then((result) => {
                 verified.intent + 1;
 
                 if (result.valid) {
