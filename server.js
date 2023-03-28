@@ -91,16 +91,16 @@ app.get("/validate/:email", async (req, res) => {
                 const respuesta = await socket.read();
                 // Si la respuesta contiene 250, el correo existe
                 if (respuesta.includes('250')) {
-                    console.log(`El correo electrónico ${correo} existe.`);
+                    console.log(`El correo electrónico ${email} existe.`);
                     return true;
                 } else {
-                    console.log(`El correo electrónico ${correo} no existe.`);
+                    console.log(`El correo electrónico ${email} no existe.`);
                     return false;
                 }
                 
                 await socket.end();
             } catch (error) {
-                console.log(`Error al verificar el correo electrónico ${correo}: ${error}`);
+                console.log(`Error al verificar el correo electrónico ${email}: ${error}`);
                 return false;
             }
 
