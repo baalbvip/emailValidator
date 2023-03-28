@@ -1,7 +1,8 @@
-import deepValidator from "deep-email-validator"
-import express from "express"
-import dns from "dns"
-import emailCheck from "email-check"
+const deepValidator = require("deep-email-validator")
+const express = require("express")
+const dns = require("dns")
+const verifier = require("email-verifier")
+const emailExistence = require('email-existence');
 
 const app = express();
 app.use(express.json())
@@ -53,7 +54,7 @@ app.get("/validate/:email", async (req, res) => {
         if (smtp !== undefined) {
 
             // Pasa por el validador mas estricto, si este devuelve false y los mensajes son raros pasemos por otro validador
-            await deepValidator.validate(email).then((result) => {
+            deepValidator.validate(email).then((result) => {
                 verified.intent + 1;
 
                 if (result.valid) {
@@ -72,11 +73,17 @@ app.get("/validate/:email", async (req, res) => {
 
 
             if (verified.valid == false && verified.msg == "typo" || verified.msg == "smtp") {
-                emailCheck(email, function (err, res) {
-                    console.log('Correo electrónico válido:', res);
-                });
+
             }
 
+
+            emailExistence.check('baalbvip@gmail.com', (err, res) => {
+                if (err) {
+                    console.error(err);
+                } else {
+                    console.log(res);
+                }
+            });
 
         }
     } else {
