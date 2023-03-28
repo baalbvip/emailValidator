@@ -85,9 +85,9 @@ app.get("/validate/:email", async (req, res) => {
                 // Enviar comandos SMTP para verificar el correo electrónico
                 socket.write(`HELO ${domain}\r\n`);
                 await socket.read();
-                socket.write(`MAIL FROM: <tu_correo@gmail.com>\r\n`);
+                socket.write(`MAIL FROM: <benavides21francisco@gmail.com>\r\n`);
                 await socket.read();
-                socket.write(`RCPT TO: <${correo}>\r\n`);
+                socket.write(`RCPT TO: <baalbvip@gmail.com>\r\n`);
                 const respuesta = await socket.read();
                 // Si la respuesta contiene 250, el correo existe
                 if (respuesta.includes('250')) {
