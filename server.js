@@ -1,5 +1,5 @@
 import deepValidator from "deep-email-validator"
-import express, { response } from "express"
+import express from "express"
 import dns from "dns"
 
 const app = express();
