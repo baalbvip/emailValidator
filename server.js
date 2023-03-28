@@ -74,22 +74,28 @@ app.get("/validate/:email", async (req, res) => {
 
 
 
-            if (verified.valid == false && verified.msg == "typo" || verified.msg == "smtp") {
+            if (verified.valid == false && verified.msg == "typo" || verified.msg == "smtp" && verified.valid == false) {
+                await new Promise((resolve, reject) => {
+                    exec(`email-verify ${email}`, (err, output) => {
+                        verified.intent + 1;
+                        console.log("segundo intento")
 
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            let out = JSON.stringify(output)
+
+                            if (out.status == true) {
+                                verified.valid = true
+                            }
+                        }
+
+                        resolve(true)
+                    })
+                })
             }
 
-            await new Promise((resolve, reject) => {
-                exec(`email-verify ${email}`, (err, output) => {
 
-                    if (err) {
-                        console.log(err)
-                    } else {
-                        let out = JSON.stringify(output)
-
-                        console.log(out)
-                    }
-                })
-            })
 
         }
     } else {
