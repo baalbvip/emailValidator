@@ -18,6 +18,10 @@ app.get("/validate/:email", async (req, res) => {
     let responseTimeOut = 0
     let verified = { valid: false, verified_type: 'random', msg: "err", intent: 0 }
 
+    const newIntent = () => {
+        verified.intent = verified.intent + 1;
+    }
+
 
     responseTimeOut = setTimeout(() => {
         verified.msg = "Timeout"
@@ -57,7 +61,7 @@ app.get("/validate/:email", async (req, res) => {
 
             // Pasa por el validador mas estricto, si este devuelve false y los mensajes son raros pasemos por otro validador
             await deepValidator.validate(email).then((result) => {
-                verified.intent + 1;
+                newIntent()
 
                 if (result.valid) {
                     let validators = result.validators
@@ -77,7 +81,7 @@ app.get("/validate/:email", async (req, res) => {
             if (verified.valid == false && verified.msg == "typo" || verified.msg == "smtp" && verified.valid == false) {
                 await new Promise((resolve, reject) => {
                     exec(`email-verify ${email}`, (err, output) => {
-                        verified.intent + 1;
+                        newIntent()
                         console.log("segundo intento")
 
                         if (err) {
