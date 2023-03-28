@@ -1,6 +1,7 @@
 import deepValidator from "deep-email-validator"
 import express from "express"
 import dns from "dns"
+import emailCheck from "email-check"
 
 const app = express();
 app.use(express.json())
@@ -53,8 +54,9 @@ app.get("/validate/:email", async (req, res) => {
 
             // Pasa por el validador mas estricto, si este devuelve false y los mensajes son raros pasemos por otro validador
             await deepValidator.validate(email).then((result) => {
-                if (result.valid) {
+                verified.intent + 1;
 
+                if (result.valid) {
                     let validators = result.validators
                     if (validators.regex.valid) {
                         if (validators.smtp.valid) {
@@ -62,11 +64,18 @@ app.get("/validate/:email", async (req, res) => {
                         }
                     }
                 }
-
                 if (!verified.valid) {
                     verified.msg = result.reason
                 }
             })
+
+
+
+            if (verified.valid == false && verified.msg == "typo" || verified.msg == "smtp") {
+                emailCheck(email, function (err, res) {
+                    console.log('Correo electrónico válido:', res);
+                });
+            }
 
 
         }
