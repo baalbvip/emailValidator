@@ -14,7 +14,7 @@ app.get("/validate/:email", async (req, res) => {
     let domain = email.split("@");
     domain = domain[1];
 
-    let maxTimeout = 50000;
+    let maxTimeout = 3000;
     let responseTimeOut = 0
     let verified = { valid: false, verified_type: 'random', msg: "err", intent: 0 }
 
